@@ -1,4 +1,4 @@
-// https://www.youtube.com/watch?v=lLWchWTUFOQ
+// part 2: https://www.youtube.com/watch?v=lLWchWTUFOQ
 
 use std::collections::HashMap;
 use std::fs;
@@ -12,14 +12,9 @@ fn main() {
     let value = arguments.next().expect("The value was not there");
     println!("The key is '{}' and the value is '{}'", key, value);
 
-    // concat with a marco, that can take af variable amount of arguments
-    let contents = format!("{}\t{}\n", key, value);
 
-    // write to file
-    fs::write("kv.db", contents).unwrap();
-
-
-    let database = Database::new().expect("database::new() crashed");
+    let database = Database::new().expect("database db failed");
+    database.insert(key, value);
 }
 
 struct Database {
@@ -44,8 +39,10 @@ impl Database {
         }
 
         // return a new database with the map in it
-        Ok(Database {
-            map: map
-        })
+        Ok(Database { map: map })
+    }
+
+    fn insert(mut self, key: String, value: String) {
+        self.map.insert(key, value);
     }
 }
