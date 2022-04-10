@@ -38,10 +38,12 @@ impl Database {
             let key= chunks.next().expect("Key not found");
             let value= chunks.next().expect("Value not found");
 
-            // populate our map
+            // populate our map (used to_owned to make a copy of the value,
+            // since it was a pointer('&str'), and therefore does not own the data)
             map.insert(key.to_owned(), value.to_owned());
         }
 
+        // return a new database with the map in it
         Ok(Database {
             map: map
         })
