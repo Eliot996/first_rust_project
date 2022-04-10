@@ -19,7 +19,8 @@ fn main() {
 }
 
 struct Database {
-    map: HashMap<String, String>
+    map: HashMap<String, String>,
+    flush: bool
 }
 
 impl Database {
@@ -40,10 +41,36 @@ impl Database {
         }
 
         // return a new database with the map in it
-        Ok(Database { map: map })
+        Ok(Database { map, flush: true })
     }
 
     fn insert(&mut self, key: String, value: String) {
         self.map.insert(key, value);
     }
+
+    fn flush(mut self) -> std::io::Result<()> {
+        self.flush = false;
+        do_flush(&self)
+    }
+}
+
+impl Drop for Database {
+    fn drop(&mut self) {
+        if !self.flush {
+            let _ = do_flush(self);
+        }
+    }
+}
+
+fn do_flush(database: &Database) -> std::io::Result<()>{
+    let mut contents = String::new();
+
+    for (key, value) in &database.map {
+        contents.push_str(key);
+        contents.push('\t');
+        contents.push_str(value);
+        contents.push('\n');
+    }
+
+    std::fs::write("kv.db", contents) // no semicolon since it is to be returned
 }
