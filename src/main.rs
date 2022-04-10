@@ -13,7 +13,8 @@ fn main() {
     println!("The key is '{}' and the value is '{}'", key, value);
 
 
-    let database = Database::new().expect("database db failed");
+    let mut database = Database::new().expect("database db failed");
+    database.insert(key.to_uppercase(), value.clone());
     database.insert(key, value);
 }
 
@@ -42,7 +43,7 @@ impl Database {
         Ok(Database { map: map })
     }
 
-    fn insert(mut self, key: String, value: String) {
+    fn insert(&mut self, key: String, value: String) {
         self.map.insert(key, value);
     }
 }
